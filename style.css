@@ -1,0 +1,62 @@
+body {
+	margin: 0;
+	padding: 15px;
+	box-sizing: border-box;
+	background-color: rgb(245, 242, 236);
+	width:300px
+}
+
+.device-selector {
+	display:flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 12px;
+}
+
+.preview-btn {
+	display: flex;
+	align-items: center;
+
+	padding: 10px;
+	font-size: 14;
+	border-radius: 8px;
+	background-color: white;
+	color:rgb(89 133 225);
+	cursor:pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	border: 2px solid transparent
+}
+
+.preview-btn:hover {
+	transform: translateY(-2px);
+	background-color: rgb(89 133 225);
+	color: white;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+	
+}
+
+.preview-btn img {
+	width: 24px;
+	margin-right: 8px;
+}
+
+
+.preview-btn img:hover {
+	color:white;
+}
+
+
+.preview-btn.selected {
+	border-color: pink;
+	background-color: rgb(225, 89, 207);
+	font-weight: 500;
+	transform: translateY(-2px);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-btn.selected::hover {
+	background-color: rgb(132, 225, 89);
+}
+
+
