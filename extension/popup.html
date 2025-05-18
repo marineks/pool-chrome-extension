@@ -1,46 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Cook-e pool progression</title>
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="style.css">
-	<title>Cook-e pool progression</title>
-</head>
-
-<body>
-	<h2>Objectif 200 000 m 🎯💧</h2>
-	<div class="progress-container">
-		<div class="progress-bar">
-			<div class="progress-swimmer">
-				<img src="/icons/swim.png" alt="swimmer" />
-			</div>
-			<div class="progress-fill"></div>
-		</div>
-		<div class="progress-info">
-			<span id="progress-meters">0 / 200 000 m</span>
-			<span id="progress-percent">0%</span>
-		</div>
-	</div>
-	<div class="leaderboard">
-		<h4>Top 3 nageurs</h4>
-		<ol id="leaderboard-list"></ol>
-	</div>
-	<div class="device-selector">
-		<button class="preview-btn" id="add-btn">
-			<img src="/icons/add.png" alt="rajouter">Rajouter
-		</button>
-	</div>
-	<div id="modal" class="modal">
-		<div class="modal-content">
-			<span class="close">&times;</span>
-			<h3>Ajouter une progression</h3>
-			<input type="text" id="prenom" placeholder="Prénom" />
-			<input type="number" id="metrage" placeholder="Mètres nagés" min="1" />
-			<button id="valider-btn" class="preview-btn">Valider</button>
-		</div>
-	</div>
-</body>
-<script src="popup.js"></script>
-
+  <body>
+    <h2>Objectif 200 000 m 🎯💧</h2>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-swimmer">
+          <img src="/icons/swim.png" alt="swimmer" />
+        </div>
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-info">
+        <span id="progress-meters">0 / 200 000 m</span>
+        <span id="progress-percent">0%</span>
+      </div>
+    </div>
+    <div class="leaderboard">
+      <h4>Top 3 nageurs</h4>
+      <ol id="leaderboard-list"></ol>
+    </div>
+    <div class="personal-total">
+      <span class="personal-total-label">Mon propre total:</span>
+      <span id="personal-total-meters">0 m 💪</span>
+    </div>
+    <div class="device-selector">
+      <button class="preview-btn" id="add-btn">
+        <img src="/icons/add.png" alt="rajouter" />Rajouter
+      </button>
+    </div>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Ajouter une progression</h3>
+        <input type="text" id="prenom" placeholder="Prénom" />
+        <input type="number" id="metrage" placeholder="Mètres nagés" min="1" />
+        <button id="valider-btn" class="preview-btn">Valider</button>
+      </div>
+    </div>
+  </body>
+  <script src="popup.js"></script>
 </html>

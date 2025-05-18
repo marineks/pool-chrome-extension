@@ -86,7 +86,6 @@ async function _buildUI(data) {
 
 function updateLeaderboard(leaderboard) {
   const listElem = document.getElementById("leaderboard-list");
-  listElem.innerHTML = "";
   leaderboard.forEach(({ name, meters }, i) => {
     const prenom = name;
     const total = meters;
