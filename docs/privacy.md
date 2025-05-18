@@ -1,6 +1,6 @@
 # Politique de confidentialité
 
-Cette extension Chrome collecte uniquement le prénom et un code d’accès à 5 chiffres, fournis par l’utilisateur lors de la connexion.  
+Cette extension Chrome collecte uniquement le prénom et un code d’accès, fournis par l’utilisateur lors de la connexion.  
 **Le code d’accès est déterminé à l’avance par l’administrateur de l’extension et communiqué uniquement aux membres autorisés.**
 
 ## Utilisation des données
