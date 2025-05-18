@@ -19,12 +19,15 @@ const progressBar = document.querySelector(".progress-bar");
 
 // Fonctions
 
-const PRENOM_KEY = "prenom";
+let PRENOM_KEY = "prenom";
 function savePrenom(prenom) {
+  PRENOM_KEY = prenom;
   localStorage.setItem(PRENOM_KEY, prenom);
 }
 function getPrenom() {
-  return localStorage.getItem(PRENOM_KEY) ?? "";
+  const fetchedUserName = localStorage.getItem(PRENOM_KEY) ?? "";
+  PRENOM_KEY = fetchedUserName;
+  return fetchedUserName;
 }
 
 async function onSubmitPressed() {
@@ -76,16 +79,30 @@ async function fetchAllStats() {
 }
 
 async function _buildUI(data) {
-  // const userName = getPrenom();
-  // const userMeters = data.byUser?.[userName] ?? 0;
-
   updateProgressBar(data.total ?? 0);
-
   updateLeaderboard(data.leaderboard);
+  updatePersonalTotal(PRENOM_KEY ?? getPrenom(), data.byUser);
+}
+
+function updatePersonalTotal(userName, metersPerUser) {
+  const personalTotalElem = document.getElementById("personal-total-meters");
+
+  if (userName === "") {
+    personalTotalElem.textContent = `Nageur.se inconnu.e`;
+  } else {
+    const personalTotal = metersPerUser?.[userName] ?? 0;
+    personalTotalElem.textContent = `${personalTotal} m 💪`;
+  }
 }
 
 function updateLeaderboard(leaderboard) {
   const listElem = document.getElementById("leaderboard-list");
+
+  // Reset the leaderboard first
+  if (listElem.children.length > 0) {
+    listElem.innerHTML = "";
+  }
+  // Append the new lines
   leaderboard.forEach(({ name, meters }, i) => {
     const prenom = name;
     const total = meters;
