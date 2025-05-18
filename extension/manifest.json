@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Pool Tracker",
   "version": "1.0",
-  "description": "L’extension permet de suivre collectivement les mètres parcourus à la piscine par une équipe, de visualiser l’objectif commun et le classement des nageurs.",
+  "description": "Extension pour suivre collectivement les mètres parcourus à la piscine par une équipe.",
   "host_permissions": ["https://pool-chrome-extension.onrender.com/*"],
   "action": {
     "default_popup": "popup.html",
