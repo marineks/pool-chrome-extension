@@ -1,22 +1,20 @@
 {
-	"manifest_version": 3,
-	"name": "Cook-e pool progression",
-	"version": "1.0",
-	"description": "Extension chrome pour pouvoir consulter l'avancée de notre objectif collectif de 200 000 m",
-	"permissions": ["activeTab", "scripting"],
-	"host_permissions": ["<all_urls>"],
-	"action": {
-		"default_popup": "popup.html",
-		"default_icon": {
-			"16": "icons/logo.png",
-			"48": "icons/logo.png",
-			"128": "icons/logo.png"
-		}
-	},
-	"icons": {
-		"16": "icons/logo.png",
-		"48": "icons/logo.png",
-		"128": "icons/logo.png"
-	}
-
+  "manifest_version": 3,
+  "name": "Pool Tracker",
+  "version": "1.0",
+  "description": "L’extension permet de suivre collectivement les mètres parcourus à la piscine par une équipe, de visualiser l’objectif commun et le classement des nageurs.",
+  "host_permissions": ["https://pool-chrome-extension.onrender.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/logo.png",
+      "48": "icons/logo.png",
+      "128": "icons/logo.png"
+    }
+  },
+  "icons": {
+    "16": "icons/logo.png",
+    "48": "icons/logo.png",
+    "128": "icons/logo.png"
+  }
 }
