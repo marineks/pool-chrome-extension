@@ -17,13 +17,45 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
+// POST /login
+app.post("/login", async (req, res) => {
+  const { name, personalCode } = req.body;
+
+  // Trim and put to lowercase
+  const trimmedName = name.trim().toLowerCase();
+  // Convert personalCode to number
+  const personalCodeNumber = Number(personalCode);
+
+  const { data, error } = await supabase
+    .from("swims")
+    .select("name")
+    .eq("name", trimmedName)
+    .eq("personal_code", personalCodeNumber)
+    .limit(1);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  if (data && data.length > 0) {
+    return res.json({ success: true });
+  } else {
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid credentials" });
+  }
+});
+
 // POST /add
 app.post("/add", async (req, res) => {
   const { name, meters } = req.body;
   console.log("Received request data:", { name, meters });
 
+  const trimmedName = name.trim().toLowerCase();
+
   try {
-    const { error } = await supabase.from("swims").insert([{ name, meters }]);
+    const { error } = await supabase
+      .from("swims")
+      .insert([{ name: trimmedName, meters }]);
 
     if (error) {
       console.error("Supabase error:", error);

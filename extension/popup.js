@@ -1,8 +1,6 @@
 // Constantes
 const BACKEND_URL = "http://localhost:3000";
 const GOAL = 200000;
-const STORAGE_KEY = "total_swim";
-const CONTRIBUTIONS_KEY = "swim_contributions";
 
 // Elements
 const progressFill = document.querySelector(".progress-fill");
@@ -16,41 +14,24 @@ const validerBtn = document.getElementById("valider-btn");
 const inputPrenom = document.getElementById("prenom");
 const inputMetrage = document.getElementById("metrage");
 const progressBar = document.querySelector(".progress-bar");
+const loginBtn = document.getElementById("login-btn");
+const loginName = document.getElementById("login-name");
+const loginCode = document.getElementById("login-code");
+const loginError = document.getElementById("login-error");
 
-// Fonctions
+// #############
+// API handlers
+// #############
 
-let PRENOM_KEY = "prenom";
-function savePrenom(prenom) {
-  PRENOM_KEY = prenom;
-  localStorage.setItem(PRENOM_KEY, prenom);
-}
-function getPrenom() {
-  const fetchedUserName = localStorage.getItem(PRENOM_KEY) ?? "";
-  PRENOM_KEY = fetchedUserName;
-  return fetchedUserName;
-}
-
-async function onSubmitPressed() {
-  const prenom = inputPrenom.value.trim();
-  const metrage = parseInt(inputMetrage.value, 10);
-  if (!prenom || isNaN(metrage) || metrage <= 0) {
-    inputMetrage.value = "";
-    inputMetrage.placeholder = "Entrez un nombre valide";
-    inputMetrage.focus();
-    return;
-  }
-
-  savePrenom(prenom);
-
-  const success = await addOneSwim(prenom, metrage);
-  if (!success) return;
-
-  inputMetrage.value = "";
-  // Refetch data and rebuild UI
-  const data = await fetchAllStats();
-  await _buildUI(data);
-
-  closeModal();
+async function login(name, code) {
+  // Send login request
+  const res = await fetch(`${BACKEND_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name, personalCode: code }),
+  });
+  const data = await res.json();
+  return data;
 }
 
 async function addOneSwim(prenom, metrage) {
@@ -78,23 +59,46 @@ async function fetchAllStats() {
   }
 }
 
-async function _buildUI(data) {
-  updateProgressBar(data.total ?? 0);
-  updateLeaderboard(data.leaderboard);
-  updatePersonalTotal(PRENOM_KEY ?? getPrenom(), data.byUser);
+// #############
+// Local storage
+// #############
+
+// Stores the user name in the storage
+function storeUserName(userName) {
+  localStorage.setItem("logged_user", userName);
 }
 
+// Gets the user name from the storage
+function getUserNameFromStorage() {
+  const fetchedUserName = localStorage.getItem("logged_user") ?? "";
+  return fetchedUserName;
+}
+
+// #############
+// UI handlers
+// #############
+
+// Builds the content of the popup
+async function _buildUI() {
+  const data = await fetchAllStats();
+  updateProgressBar(data.total ?? 0);
+  updateLeaderboard(data.leaderboard);
+  updatePersonalTotal(getUserNameFromStorage(), data.byUser);
+}
+
+// Builds the personal total meters
 function updatePersonalTotal(userName, metersPerUser) {
   const personalTotalElem = document.getElementById("personal-total-meters");
 
   if (userName === "") {
     personalTotalElem.textContent = `Nageur.se inconnu.e`;
   } else {
-    const personalTotal = metersPerUser?.[userName] ?? 0;
+    const personalTotal = metersPerUser?.[userName.toLowerCase()] ?? 0;
     personalTotalElem.textContent = `${personalTotal} m 💪`;
   }
 }
 
+// Builds the leaderboard
 function updateLeaderboard(leaderboard) {
   const listElem = document.getElementById("leaderboard-list");
 
@@ -104,20 +108,25 @@ function updateLeaderboard(leaderboard) {
   }
   // Append the new lines
   leaderboard.forEach(({ name, meters }, i) => {
-    const prenom = name;
-    const total = meters;
+    if (!meters || meters === 0) {
+      return;
+    }
+
+    // Format the name
+    const formattedName = formatUserName(name);
+
     const li = document.createElement("li");
-    li.textContent = `${prenom} : ${total.toLocaleString("fr-FR")} m`;
+    li.textContent = `${formattedName} : ${meters.toLocaleString("fr-FR")} m`;
     listElem.appendChild(li);
   });
-  if (leaderboard.length === 0) {
+  if (leaderboard.length === 0 || listElem.children.length === 0) {
     const li = document.createElement("li");
     li.textContent = "Aucun nageur pour le moment.";
     listElem.appendChild(li);
   }
 }
 
-// UPDATE PROGRESS BAR WITH SWIMMER ICON
+// Builds the progress bar with the swimmer icon
 function updateProgressBar(totalGroupSwim) {
   if (isNaN(totalGroupSwim)) {
     totalGroupSwim = 0;
@@ -146,9 +155,64 @@ function updateProgressBar(totalGroupSwim) {
   progressSwimmer.style.top = "50%";
 }
 
+// ##########################
+// User interaction handlers
+// ##########################
+
+// Handles the submission of the login form
+async function onLoginPressed() {
+  const nameInput = loginName.value.trim();
+  const codeInput = loginCode.value.trim();
+  const errorDiv = loginError;
+
+  if (!nameInput || !codeInput) {
+    errorDiv.textContent = "Veuillez remplir tous les champs.";
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  const { success } = await login(nameInput, codeInput);
+
+  if (success) {
+    // Format the name
+    const formattedName = formatUserName(nameInput);
+    // Save user info
+    storeUserName(formattedName);
+    // Hide login, show main UI
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-ui").style.display = "";
+    // Trigger the UI update
+    await _buildUI();
+  } else {
+    errorDiv.textContent = data.message || "Erreur de connexion.";
+    errorDiv.style.display = "block";
+  }
+}
+
+// Handles the submission of a new swim
+async function onSubmitPressed() {
+  const prenom = inputPrenom.value.trim();
+  const metrage = parseInt(inputMetrage.value, 10);
+  if (!prenom || isNaN(metrage) || metrage <= 0) {
+    inputMetrage.value = "";
+    inputMetrage.placeholder = "Entrez un nombre valide";
+    inputMetrage.focus();
+    return;
+  }
+
+  const success = await addOneSwim(prenom, metrage);
+  if (!success) return;
+
+  inputMetrage.value = "";
+  // Refetch data and rebuild UI
+  await _buildUI();
+
+  closeModal();
+}
+
 function openModal() {
   modal.style.display = "flex";
-  inputMetrage.value = PRENOM_KEY ?? getPrenom();
+  inputMetrage.value = getUserNameFromStorage();
   inputPrenom.focus();
 }
 
@@ -157,12 +221,17 @@ function closeModal() {
 }
 
 // Event listeners
+
+// -- Click handlers
+loginBtn.addEventListener("click", onLoginPressed);
+validerBtn.addEventListener("click", onSubmitPressed);
 addBtn.addEventListener("click", openModal);
 closeModalBtn.addEventListener("click", closeModal);
-validerBtn.addEventListener("click", onSubmitPressed);
 modal.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
 });
+
+// -- Keydown handlers
 inputMetrage.addEventListener("keydown", (e) => {
   if (e.key === "Enter") onSubmitPressed();
 });
@@ -170,10 +239,28 @@ inputPrenom.addEventListener("keydown", (e) => {
   if (e.key === "Enter") inputMetrage.focus();
 });
 
-// Initialisation
+// -- Init (page load)
 document.addEventListener("DOMContentLoaded", async () => {
-  inputPrenom.value = getPrenom();
+  const userName = getUserNameFromStorage();
+  inputPrenom.value = userName;
 
-  const data = await fetchAllStats();
-  await _buildUI(data);
+  // If the user is logged in, hide the login section and show the main UI
+  if (userName) {
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-ui").style.display = "";
+    await _buildUI();
+  }
 });
+
+// ##########################
+// Helper functions
+// ##########################
+
+function formatUserName(name) {
+  // Put everything in lowercase first
+  const lowerCaseName = name.toLowerCase();
+  // Capitalize the first letter
+  const capLetterUserName =
+    lowerCaseName.charAt(0).toUpperCase() + lowerCaseName.slice(1);
+  return capLetterUserName;
+}
