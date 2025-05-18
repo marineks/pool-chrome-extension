@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 dotenv.config();
-
+const PORT = process.env.PORT ?? 3000;
 // Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -97,4 +97,4 @@ function computeData(data) {
   return { total, leaderboard, byUser };
 }
 
-app.listen(3000, () => console.log("API up on http://localhost:3000"));
+app.listen(PORT, () => console.log(`API up on ${PORT}`));
